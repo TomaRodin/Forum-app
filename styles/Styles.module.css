@@ -1,0 +1,60 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300&family=Roboto:wght@300&display=swap');
+
+.container {
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    margin-left: 500px;
+    margin-right: 500px;
+    padding-bottom: 50px;
+    padding-top: 30px;
+    margin-top: 30px;
+    font-family: 'Open Sans', sans-serif;
+    border-radius: 15px
+}
+
+.form {
+    text-align: center;
+    
+}
+
+.ext {
+    color: red;
+    font-weight: bold;
+}
+
+.usersContainer {
+    background-color: #c0cccb;
+}
+
+.profile {
+    position: absolute;
+    right: 3px;
+}
+
+.centerContainer {
+    margin-left: 30px;
+}
+
+.inLineContainer {
+    display: inline-block;
+}
+
+.inLineContainer1 {
+    margin: 1rem;
+}
+
+.LogOutButton {
+    position: absolute;
+    right: 3%;
+    top: 15%;
+}
+
+.Question {
+    background-color:#e0e2e2;
+    padding: 10px;
+    margin-bottom:15px;
+    border-radius: 15px
+}
+
+.Question a {
+    font-weight: bold;
+}
