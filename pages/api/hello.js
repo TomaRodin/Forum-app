@@ -128,4 +128,32 @@ app.get('/question', basicAuth({ users: { 'admin': 'admin123' } }), function (re
   })
 })
 
+app.post('/answer', basicAuth({ users: { 'admin': 'admin123' } }), function (req, res) {
+  const sqlite3 = require('sqlite3').verbose();
+  let db = new sqlite3.Database('database.db', sqlite3.OPEN_READWRITE, (err) => {
+    db.run(`INSERT INTO Answers (username,answer,questionID) VALUES ('${req.body.name}','${req.body.answer}','${req.body.id}')`);
+  })
+
+  res.json({success: true});
+})
+
+app.get('/answers', function (req,res) {
+  const sqlite3 = require('sqlite3').verbose();
+  let db = new sqlite3.Database('database.db', sqlite3.OPEN_READWRITE, (err) => {
+
+  });
+  db.all(`SELECT * FROM Answers WHERE questionID ="${req.query.id}" `, function (err, rows) {
+    res.json(rows)
+  })
+})
+
+app.get('/search/:keywords', function (req,res) {
+  const sqlite3 = require('sqlite3').verbose();
+  let db = new sqlite3.Database('database.db', sqlite3.OPEN_READWRITE, (err) => {
+    db.all(`SELECT * FROM Questions WHERE title LIKE "%${req.params.keywords}%"`, function (err, rows) {
+      res.json(rows)
+    })
+  });
+})
+
 app.listen(3001)
