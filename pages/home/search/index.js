@@ -25,7 +25,9 @@ export default function Search() {
 
         axios.get(`http://localhost:3001/search/${search.current.value}`)
         .then(response => {
-            console.log(response.data)
+            if (response.data.length < 1) {
+                alert("Can't find")
+            }
             setData(response.data)
         })
     }

@@ -29,7 +29,7 @@ app.get("/login", basicAuth({ users: { 'admin': 'admin123' } }) , function (req,
     else {
       bcrypt.compare(req.query.password, row.password).then(result => {
         if (result) {
-          res.json({ status: true, username: row.username })
+          res.json({ status: true, username: row.username, id: row.ID})
         }
 
         else {
@@ -97,7 +97,7 @@ app.get("/search", (req, res) => {
 app.post('/', function (req, res) {
   const sqlite3 = require('sqlite3').verbose();
   let db = new sqlite3.Database('database.db', sqlite3.OPEN_READWRITE, (err) => {
-    db.run(`INSERT INTO Questions (username,title,text) VALUES ('${req.body.name}','${req.body.title}','${req.body.text}')`);
+    db.run(`INSERT INTO Questions (username,title,text,userID) VALUES ('${req.body.name}','${req.body.title}',"${req.body.text}",'${req.body.userID}')`);
   })
 
   res.json({success: true});
@@ -131,7 +131,7 @@ app.get('/question', basicAuth({ users: { 'admin': 'admin123' } }), function (re
 app.post('/answer', basicAuth({ users: { 'admin': 'admin123' } }), function (req, res) {
   const sqlite3 = require('sqlite3').verbose();
   let db = new sqlite3.Database('database.db', sqlite3.OPEN_READWRITE, (err) => {
-    db.run(`INSERT INTO Answers (username,answer,questionID) VALUES ('${req.body.name}','${req.body.answer}','${req.body.id}')`);
+    db.run(`INSERT INTO Answers (username,answer,questionID,userID) VALUES ('${req.body.name}',"${req.body.answer}",'${req.body.id}','${req.body.userID}')`);
   })
 
   res.json({success: true});
@@ -148,12 +148,53 @@ app.get('/answers', function (req,res) {
 })
 
 app.get('/search/:keywords', function (req,res) {
-  const sqlite3 = require('sqlite3').verbose();
-  let db = new sqlite3.Database('database.db', sqlite3.OPEN_READWRITE, (err) => {
-    db.all(`SELECT * FROM Questions WHERE title LIKE "%${req.params.keywords}%"`, function (err, rows) {
-      res.json(rows)
-    })
-  });
+  if (req.params.keywords.length < 3) {
+    res.json([])
+  }
+  else {
+    const sqlite3 = require('sqlite3').verbose();
+    let db = new sqlite3.Database('database.db', sqlite3.OPEN_READWRITE, (err) => {
+      db.all(`SELECT * FROM Questions WHERE title LIKE "%${req.params.keywords}%"`, function (err, rows) {
+        db.all(`SELECT * FROM Questions WHERE text LIKE "%${req.params.keywords}%"`, function (err, rowss) {
+            const result = rows.concat(rowss)
+            console.log(result)
+        
+            res.json(result)
+        })
+      })
+    });
+  }
 })
+
+app.get('/user', function (req,res) {
+  const sqlite3 = require('sqlite3').verbose();
+  let db = new sqlite3.Database('database.db', sqlite3.OPEN_READWRITE)
+  db.all(`SELECT username,ID FROM Users WHERE ID = "${req.query.id}"`, function (err, rows) {
+    const row = rows[0];
+    res.json(row)
+  })
+})
+
+app.delete('/answer', function (req,res) {
+  console.log(req.body)
+  const sqlite3 = require('sqlite3').verbose();
+  let db = new sqlite3.Database('database.db', sqlite3.OPEN_READWRITE)
+  db.all(`DELETE FROM Answers WHERE questionID = "${req.body.id}"`)
+
+  res.json({success: true})
+
+})
+
+app.delete('/question', basicAuth({ users: { 'admin': 'admin123' } }), function (req,res) {
+  const sqlite3 = require('sqlite3').verbose();
+  let db = new sqlite3.Database('database.db', sqlite3.OPEN_READWRITE)
+  db.all(`DELETE FROM Questions WHERE id = "${req.body.id}"`)
+  db.all(`DELETE FROM Answers WHERE questionID = "${req.body.id}"`)
+
+  res.json({success: true})
+
+})
+      
+    
 
 app.listen(3001)

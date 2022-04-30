@@ -15,7 +15,8 @@ export default function Profile() {
 
     function LogOut() {
         const cookie = new Cookie();
-        cookie.remove("LoggedIn")
+        cookie.remove("LoggedIn", { path: '/' })
+        cookie.remove("ID", { path: '/' })
         location.reload();
     }
 

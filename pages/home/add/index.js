@@ -34,15 +34,15 @@ export default function Home() {
         e.preventDefault()
 
         class Data {
-            constructor(name, title, text) {
+            constructor(name, title, text, userID) {
                 this.name = name
                 this.title = title
                 this.text = text
+                this.userID = userID
             }
         }
 
-        const data = new Data(cookie.get('LoggedIn'), title.current.value, text.current.value)
-    
+        const data = new Data(cookie.get('LoggedIn'), title.current.value, text.current.value, cookie.get('ID'))
 
         axios.post('http://localhost:3001/', data)
         .then(response => {

@@ -15,7 +15,9 @@ export default function index() {
 
     const cookie = new Cookie();
 
-    const handleSubmit = () => {
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
         const authUsername = 'admin'
         const authPassword = 'admin123'
 
@@ -28,6 +30,7 @@ export default function index() {
             console.log(response.data.status)
             if (response.data.status === true) {
                 cookie.set('LoggedIn', response.data.username, { path: "/" })
+                cookie.set('ID', response.data.id, { path: "/" })
                 Router.push('/home')
             }
             else if (response.data.status === false) {
@@ -47,16 +50,18 @@ export default function index() {
         <div>
             <div className={styles.container}>
                 <div className={styles.form} >
-                    <h1>Login</h1>
-                    <input type="text" placeholder="Username:" ref={username} ></input>
-                    <br />
-                    <input type="password" placeholder="Password:" ref={password} ></input>
-                    <br />
-                    {isFalse}
-                    <br />
-                    <button onClick={handleSubmit} >Log In</button>
-                    <br />
-                    <a href="/register">Register</a>
+                    <form onSubmit={handleSubmit}>
+                        <h1>Login</h1>
+                        <input type="text" placeholder="Username:" ref={username} ></input>
+                        <br />
+                        <input type="password" placeholder="Password:" ref={password} ></input>
+                        <br />
+                        {isFalse}
+                        <br />
+                        <button>Log In</button>
+                        <br />
+                        <a href="/register">Register</a>
+                    </form>
                 </div>
             </div>
         </div>
